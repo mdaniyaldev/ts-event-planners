@@ -1,0 +1,5 @@
+media-originals
+node_modules
+.next
+out
+.claude

@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+/* Gold + white. Gold text on white uses --color-gold-deep to stay readable. */
+@theme {
+  --color-white: #ffffff;
+  --color-leaf: #f6f4ef;
+  --color-ink: #201c14;
+  --color-ink-soft: #5b5445;
+  --color-gold-deep: #7d5f17;
+  --color-gold: #c9a24a;
+  --color-gold-foil: #ebd27f;
+  --color-line: #e4dcc8;
+
+  --font-display: var(--font-gilda), "Times New Roman", serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-white);
+    color: var(--color-ink);
+    scroll-padding-top: 4.5rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-gold-foil);
+    color: var(--color-ink);
+  }
+}
+
+/*
+  Gold foil. Hard-edged bands (not a smooth gradient) so it reads as leaf
+  catching light. Three stacked layers, top to bottom:
+    1. a soft highlight that follows the pointer (--mx / --my set in Hero)
+    2. a one-time sweep of light after the headline is laid down
+    3. the faceted foil itself
+*/
+.foil-text {
+  --mx: -60rem;
+  --my: -60rem;
+  color: var(--color-gold-deep); /* fallback if background-clip is unsupported */
+  background-image:
+    radial-gradient(circle 13rem at var(--mx) var(--my), rgb(255 252 235 / 0.95), transparent 70%),
+    linear-gradient(100deg, transparent 42%, rgb(255 255 255 / 0.85) 50%, transparent 58%),
+    linear-gradient(
+      104deg,
+      #8a6a1f 0 13%,
+      #b8923a 13% 24%,
+      #e8cf75 24% 28%,
+      #c9a24a 28% 41%,
+      #9a7826 41% 55%,
+      #d8b85c 55% 59%,
+      #b08a2e 59% 74%,
+      #8a6a1f 74% 88%,
+      #c39c43 88% 100%
+    );
+  background-size: 100% 100%, 300% 100%, 100% 100%;
+  background-position: 0 0, 150% 0, 0 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .foil-text[data-laid="true"] {
+    animation: foil-sweep 2.2s cubic-bezier(0.25, 0.6, 0.2, 1) 0.4s 1 both;
+  }
+}
+
+@keyframes foil-sweep {
+  from {
+    background-position: 0 0, 150% 0, 0 0;
+  }
+  to {
+    background-position: 0 0, -50% 0, 0 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion. Mostly CSS so it costs no JavaScript.                       */
+/* ------------------------------------------------------------------ */
+
+/* Marquee of event types. Two identical groups, shifted by half the track. */
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker {
+  animation: ticker 50s linear infinite;
+}
+.ticker-wrap:hover .ticker,
+.ticker-wrap:focus-within .ticker {
+  animation-play-state: paused;
+}
+
+/* Fairy lights: each bulb twinkles on its own delay (--d is set per bulb). */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: drop-shadow(0 0 0 #fff3c4);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 7px #fff3c4);
+  }
+}
+.bulb {
+  animation: twinkle 2.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* Stage curtains for the first visit. Panels slide apart; the wordmark fades first. */
+.curtain {
+  background: repeating-linear-gradient(
+    90deg,
+    #b08a2e 0,
+    #c9a24a 14px,
+    #e1c46c 26px,
+    #c9a24a 38px,
+    #a98329 52px
+  );
+}
+@keyframes curtain-left {
+  to {
+    transform: translateX(-101%);
+  }
+}
+@keyframes curtain-right {
+  to {
+    transform: translateX(101%);
+  }
+}
+@keyframes mark-out {
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+.curtain-l {
+  box-shadow: 10px 0 30px rgb(32 28 20 / 0.28);
+  animation: curtain-left 0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.7s forwards;
+}
+.curtain-r {
+  box-shadow: -10px 0 30px rgb(32 28 20 / 0.28);
+  animation: curtain-right 0.95s cubic-bezier(0.76, 0, 0.24, 1) 0.7s forwards;
+}
+.curtain-mark {
+  animation: mark-out 0.4s ease-in 0.55s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker,
+  .bulb {
+    animation: none;
+  }
+  .bulb {
+    opacity: 1;
+  }
+}
+
+/*
+  Scroll-driven effects (what GSAP's ScrollTrigger is usually used for).
+  Browsers without animation-timeline simply show the finished state.
+*/
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* A photo is uncovered top to bottom while it scrolls in, then settles. */
+    @keyframes reveal-wipe {
+      from {
+        clip-path: inset(0 0 100% 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+    @keyframes reveal-settle {
+      from {
+        scale: 1.18;
+      }
+      to {
+        scale: 1;
+      }
+    }
+    .reveal-img {
+      animation: reveal-wipe linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .reveal-img > img {
+      animation: reveal-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 50%;
+    }
+
+    /* The hero photo opens out from the middle like a stage widening. */
+    @keyframes stage-open {
+      from {
+        clip-path: inset(14% 22% 0 22%);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+    .stage-open {
+      animation: stage-open linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 40%;
+    }
+
+    /* A gold line draws itself as its step scrolls into view. */
+    @keyframes draw {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+    .draw-line {
+      transform-origin: left;
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry var(--s, 0%) entry var(--e, 80%);
+    }
+  }
+}
+
+/* Flat metallic fill for buttons and the small marks: no gradient wash. */
+.gold-fill {
+  background-color: var(--color-gold);
+  color: var(--color-ink);
+}

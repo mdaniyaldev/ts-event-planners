@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+.claude/settings.local.json
+# Raw uploads (85 MB). Not shipped; `npm run media` turns them into public/gallery and public/videos.
+media-originals
