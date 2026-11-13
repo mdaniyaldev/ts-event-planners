@@ -6,6 +6,7 @@ export const categories = [
   "Banquet halls",
   "Dinners and lounges",
   "Birthdays",
+  "Stage designs",
 ] as const;
 export type PhotoCategory = (typeof categories)[number];
 
@@ -19,6 +20,7 @@ export const filterSlug: Record<Exclude<Filter, "All">, string> = {
   "Banquet halls": "banquet-halls",
   "Dinners and lounges": "dinners-and-lounges",
   Birthdays: "birthdays",
+  "Stage designs": "stage-designs",
   Videos: "videos",
 };
 
@@ -60,8 +62,14 @@ const assignment: Record<PhotoCategory, number[]> = {
     149, 150, 151, 152, 156, 157,
   ],
   Birthdays: range(166, 182),
+  // A second view of photos that are also listed above (the client's Instagram has a "Stage Designs" highlight).
+  // These are kept out of "All" so no photo shows twice there (see `alsoListed`).
+  "Stage designs": [1, 5, 6, 12, 14, 26, 43, 61, 69, 71, 73, 94, 95, 96, 101, 103, 122, 141, 153, 165],
 };
 // Left out on purpose: 18 (not an event photo) and 87, 88, 107, 137 (repeats of 85, 84, 103, 136).
+
+/** Categories whose photos also belong to another category, so the "All" view skips them. */
+const alsoListed: PhotoCategory[] = ["Stage designs"];
 
 const alt: Record<PhotoCategory, string> = {
   Weddings: "Wedding stage, entrance or marquee set up by TS Event Planners",
@@ -69,6 +77,7 @@ const alt: Record<PhotoCategory, string> = {
   "Banquet halls": "Banquet hall layout with tables and stage by TS Event Planners",
   "Dinners and lounges": "Dinner table or lounge seating arranged by TS Event Planners",
   Birthdays: "Birthday party decor by TS Event Planners",
+  "Stage designs": "Stage with sofas, flowers and drapes designed by TS Event Planners",
 };
 
 const photos = manifest.photos as Record<string, { w: number; h: number }>;
@@ -96,7 +105,7 @@ export const byCategory = Object.fromEntries(categories.map((c) => [c, build(c)]
 
 /** "All" mixes the categories one after another so the first screen isn't one event type. */
 export const allPhotos: Photo[] = (() => {
-  const lists = categories.map((c) => [...byCategory[c]]);
+  const lists = categories.filter((c) => !alsoListed.includes(c)).map((c) => [...byCategory[c]]);
   const out: Photo[] = [];
   while (lists.some((l) => l.length)) for (const l of lists) if (l.length) out.push(l.shift()!);
   return out;
@@ -116,10 +125,44 @@ export function photoRef(n: number, alt: string) {
   return { src: `/gallery/l/${id}.webp`, w: meta.w, h: meta.h, alt };
 }
 
-/** The photo used under the hero headline. */
-export const heroPhoto = {
-  src: "/gallery/l/p023.webp",
-  w: photos.p023.w,
-  h: photos.p023.h,
-  alt: "A white aisle with gold stripes running through a lawn marquee with draped ceiling and chandeliers",
+/**
+ * The photos behind the home hero, shown one after another (slow crossfade, CSS only). Each slide has a wide
+ * photo for landscape screens and a tall one for phones. All are night scenes, so the gold headline reads on them.
+ */
+export const heroSlides = [
+  {
+    wide: photoRef(16, "A floral entrance arch lit by candelabras at night, opening onto a green lawn and a lit stage"),
+    tall: photoRef(153, "A lawn wedding stage at night: a white sofa under a canopy of pink and white flowers and hanging lights"),
+  },
+  {
+    wide: photoRef(5, "A stage with a gold sofa in front of a red rose wall, under hanging greenery and chandeliers"),
+    tall: photoRef(0, "A wedding entrance arch of purple and white flowers glowing at night"),
+  },
+  {
+    wide: photoRef(95, "A mehndi stage with a floral backdrop and a colourful patterned dance floor"),
+    tall: photoRef(147, "A hanging flower arch over a white aisle"),
+  },
+  {
+    wide: photoRef(23, "A white aisle with gold stripes running through a lawn marquee with draped ceiling and chandeliers"),
+    tall: photoRef(72, "A flower-covered metal arch opening onto a long aisle and a lit stage"),
+  },
+];
+
+/** The wide photo for the full-width band between sections on the home page. */
+export const interludePhoto = photoRef(
+  94,
+  "A mehndi hall at night: a lit walkway between hanging flowers leading to a stage with a gold sofa",
+);
+
+/**
+ * Cover photo for each gallery highlight (the round covers on the home page and the gallery).
+ * "All" and "Videos" have no photo; they get the brand mark and a play symbol instead.
+ */
+export const highlightCover: Record<PhotoCategory, number> = {
+  Weddings: 16,
+  "Mehndi and dholki": 101,
+  "Banquet halls": 40,
+  "Dinners and lounges": 143,
+  Birthdays: 171,
+  "Stage designs": 5,
 };

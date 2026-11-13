@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { m } from "framer-motion";
-import { filterHref, filters, photosFor, videos, type Filter, type Photo } from "@/lib/photos";
+import { Highlights } from "@/components/highlights";
+import { Reveal } from "@/components/reveal";
+import { photosFor, videos, type Filter, type Photo } from "@/lib/photos";
 
 const PAGE = 12;
 
@@ -24,36 +25,22 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
   return (
     <div>
       <header className="mx-auto max-w-7xl px-5 pb-10 pt-14 sm:px-8 sm:pb-12 sm:pt-20">
-        <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">{filter === "All" ? "Our events" : filter}</h1>
-        <p className="mt-5 max-w-[40rem] text-lg text-ink-soft sm:text-xl">{intro}</p>
+        <Reveal>
+          <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">{filter === "All" ? "Our events" : filter}</h1>
+          <p className="mt-5 max-w-[40rem] text-lg text-ink-soft sm:text-xl">{intro}</p>
+        </Reveal>
 
-        <nav aria-label="Event types" className="mt-8 flex flex-wrap gap-x-6 gap-y-1">
-          {filters.map((f) => (
-            <Link
-              key={f}
-              href={filterHref(f)}
-              aria-current={filter === f ? "page" : undefined}
-              className={`inline-flex min-h-11 min-w-11 items-center justify-center border-b-2 px-1 text-base ${
-                filter === f ? "border-gold font-semibold text-ink" : "border-transparent text-ink-soft hover:text-ink"
-              }`}
-            >
-              {f}
-            </Link>
-          ))}
-        </nav>
+        <div className="mt-10">
+          <Highlights active={filter} withAll />
+        </div>
       </header>
 
       <section className="border-t border-line bg-leaf py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35 }}
-            className="gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5"
-          >
+          <div className="gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5">
             {filter === "Videos"
               ? videos.map((v, i) => (
-                  <div key={v.id} className="break-inside-avoid border border-line bg-white">
+                  <Reveal key={v.id} delay={(i % 3) * 0.08} className="break-inside-avoid border border-line bg-white">
                     <video
                       controls
                       playsInline
@@ -63,33 +50,35 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
                       aria-label={`Event video ${i + 1}`}
                       className="block h-auto w-full bg-ink"
                     />
-                  </div>
+                  </Reveal>
                 ))
               : shown.map((p, i) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    aria-haspopup="dialog"
-                    aria-label={`Open photo ${i + 1} of ${list.length}`}
-                    onClick={(e) => {
-                      lastTrigger.current = e.currentTarget;
-                      setOpenIndex(i);
-                    }}
-                    className="block w-full break-inside-avoid overflow-hidden border border-line bg-white"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={p.thumb}
-                      alt={p.alt}
-                      width={p.w}
-                      height={p.h}
-                      loading="lazy"
-                      decoding="async"
-                      className="block h-auto w-full"
-                    />
-                  </button>
+                  // Photos fade up as they scroll into view, including the ones "Show more" adds.
+                  <Reveal key={p.id} delay={(i % 3) * 0.08} className="break-inside-avoid">
+                    <button
+                      type="button"
+                      aria-haspopup="dialog"
+                      aria-label={`Open photo ${i + 1} of ${list.length}`}
+                      onClick={(e) => {
+                        lastTrigger.current = e.currentTarget;
+                        setOpenIndex(i);
+                      }}
+                      className="img-zoom block w-full cursor-zoom-in border border-line bg-white"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.thumb}
+                        alt={p.alt}
+                        width={p.w}
+                        height={p.h}
+                        loading="lazy"
+                        decoding="async"
+                        className="block h-auto w-full"
+                      />
+                    </button>
+                  </Reveal>
                 ))}
-          </m.div>
+          </div>
 
           {filter !== "Videos" && (
             <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -97,7 +86,7 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
                 <button
                   type="button"
                   onClick={() => setCount((c) => c + PAGE)}
-                  className="gold-fill inline-flex min-h-12 items-center px-7 text-base font-semibold transition-colors hover:bg-gold-foil"
+                  className="btn-gold inline-flex min-h-12 items-center px-7 text-base font-semibold"
                 >
                   Show {Math.min(PAGE, list.length - count)} more photos
                 </button>
@@ -182,7 +171,7 @@ function Lightbox({
   }, [index, hasPrev, hasNext, onIndex, onClose]);
 
   const nav =
-    "min-h-11 px-4 text-base font-semibold text-white hover:text-gold-foil disabled:cursor-not-allowed disabled:opacity-30";
+    "min-h-11 px-4 text-base font-semibold text-white transition-colors hover:text-gold-foil focus-visible:text-gold-foil disabled:cursor-not-allowed disabled:opacity-30";
 
   return (
     <m.div

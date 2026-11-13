@@ -3,11 +3,19 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { m, useReducedMotion } from "framer-motion";
-import { heroPhoto } from "@/lib/photos";
+import { heroSlides } from "@/lib/photos";
+import { site, whatsappHref } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/icons";
 import { useIntroReady } from "@/components/intro";
 
 const LAY = [0.22, 0.7, 0.2, 1] as const;
 
+/**
+ * The home hero: the client's night photos fill the screen and change slowly, one crossfading into the
+ * next (CSS only, see .hero-slide in globals.css), with the gold tagline laid over them the way their logo
+ * sits gold on black. Landscape screens get the wide photos, phones the tall ones. The header sits on top
+ * of the photo (see header.tsx). The first slide is the only one that is not hidden when reduced motion is on.
+ */
 export function Hero() {
   const reduce = useReducedMotion();
   const ready = useIntroReady();
@@ -26,59 +34,72 @@ export function Hero() {
   return (
     <section
       onPointerMove={onPointerMove}
-      className="mx-auto max-w-7xl px-5 pb-20 pt-16 sm:px-8 sm:pb-28 sm:pt-24 lg:pt-28"
+      className="relative isolate flex min-h-[max(34rem,min(100svh,58rem))] flex-col justify-end bg-ink text-white"
     >
-      {/* The wipe runs left to right, once, as the curtain opens (or straight away on later visits). */}
-      <m.h1
-        ref={headingRef}
-        data-laid={ready}
-        className="foil-text font-display text-[clamp(2.9rem,10vw,9.5rem)] leading-[0.98] tracking-[-0.01em] pb-[0.08em]"
-        initial={reduce ? false : { clipPath: "inset(-10% 100% -10% -2%)" }}
-        animate={{ clipPath: ready ? "inset(-10% -2% -10% -2%)" : "inset(-10% 100% -10% -2%)" }}
-        transition={{ duration: 1.3, ease: LAY }}
-      >
-        We manage,
-        <br />
-        you celebrate.
-      </m.h1>
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {heroSlides.map((s, i) => (
+          <picture key={s.wide.src} className="hero-slide" style={{ "--i": i } as React.CSSProperties}>
+            <source media="(min-width: 768px)" srcSet={s.wide.src} width={s.wide.w} height={s.wide.h} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={s.tall.src}
+              // The slides are the same kind of picture; only the first one is described.
+              alt={i === 0 ? s.wide.alt : ""}
+              width={s.tall.w}
+              height={s.tall.h}
+              fetchPriority={i === 0 ? "high" : "auto"}
+              className="h-full w-full object-cover object-[center_30%] md:object-center"
+            />
+          </picture>
+        ))}
+      </div>
+      {/* Darkens the top (under the header) and the lower part so the gold headline and the white copy stay readable on any photo. */}
+      <div aria-hidden="true" className="hero-shade absolute inset-0 -z-10" />
 
-      <m.div
-        initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: ready ? 1 : 0 }}
-        transition={{ duration: 0.8, delay: ready ? 1.1 : 0 }}
-      >
-        <div className="mt-10 grid gap-8 sm:mt-14 md:grid-cols-[minmax(0,36rem)_auto] md:items-end md:justify-between">
-          <p className="max-w-[36rem] text-lg text-ink-soft sm:text-xl">
-            TS Event Planners designs and runs weddings, mehndis, receptions and birthdays in Karachi. Tell us the date
-            and the guest count, and we take care of the rest.
+      <div className="mx-auto w-full max-w-7xl px-5 pb-12 pt-52 sm:px-8 sm:pb-16 sm:pt-48">
+        {/* The wipe runs left to right, once, as the curtain opens (or straight away on later visits). */}
+        <m.h1
+          ref={headingRef}
+          data-laid={ready}
+          className="foil-text font-display text-[clamp(3.2rem,9.5vw,8.75rem)] font-semibold leading-[0.95] tracking-[-0.01em] pb-[0.08em]"
+          initial={reduce ? false : { clipPath: "inset(-10% 100% -10% -2%)" }}
+          animate={{ clipPath: ready ? "inset(-10% -2% -10% -2%)" : "inset(-10% 100% -10% -2%)" }}
+          transition={{ duration: 1.3, ease: LAY }}
+        >
+          We manage,
+          <br />
+          you celebrate.
+        </m.h1>
+
+        <m.div
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: ready ? 1 : 0 }}
+          transition={{ duration: 0.8, delay: ready ? 1.1 : 0 }}
+          className="mt-8 grid gap-7 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between"
+        >
+          <p className="max-w-[34rem] text-lg text-white/85 sm:text-xl">
+            Weddings, mehndis, receptions and birthdays across {site.city}, set up before your guests arrive. Tell us
+            the date and the guest count, and we take care of the rest.
           </p>
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+          <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
             <Link
               href="/contact/"
-              className="gold-fill inline-flex min-h-12 items-center px-7 text-base font-semibold transition-colors hover:bg-gold-foil"
+              className="btn-gold inline-flex min-h-12 items-center px-7 text-base font-semibold"
             >
               Plan your event
             </Link>
-            <Link
-              href="/gallery/"
-              className="inline-flex min-h-11 items-center text-base font-semibold text-gold-deep underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink"
+            <a
+              href={whatsappHref(`Salam, I would like to plan an event in ${site.city}.`)}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex min-h-11 items-center gap-2 text-base font-semibold link-light"
             >
-              See our events
-            </Link>
+              <WhatsAppIcon className="h-5 w-5" />
+              Message on WhatsApp
+            </a>
           </div>
-        </div>
-
-        {/* stage-open: CSS scroll animation that widens the photo from the middle as it scrolls in. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={heroPhoto.src}
-          alt={heroPhoto.alt}
-          width={heroPhoto.w}
-          height={heroPhoto.h}
-          fetchPriority="high"
-          className="stage-open mt-14 aspect-[4/3] w-full object-cover sm:mt-20 md:aspect-[16/9]"
-        />
-      </m.div>
+        </m.div>
+      </div>
     </section>
   );
 }

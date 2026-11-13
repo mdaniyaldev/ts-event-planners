@@ -1,13 +1,16 @@
+import { Reveal } from "@/components/reveal";
 import { faqs } from "@/lib/content";
 
 export function Faq() {
   return (
     <section id="faq" className="border-t border-line bg-leaf py-20 sm:py-28">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-24">
-        <h2 className="font-display text-4xl leading-tight sm:text-5xl">Questions we hear often</h2>
+        <Reveal>
+          <h2 className="font-display text-4xl leading-tight sm:text-5xl">Questions we hear often</h2>
+        </Reveal>
 
         {/* Native <details> gives keyboard and screen reader support without any script. */}
-        <div className="border-b border-gold/60">
+        <Reveal delay={0.1} className="border-b border-gold/60">
           {faqs.map((f) => (
             <details key={f.q} className="group border-t border-gold/60">
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-display text-xl sm:text-2xl [&::-webkit-details-marker]:hidden">
@@ -20,7 +23,7 @@ export function Faq() {
               <p className="max-w-[40rem] pb-6 text-ink-soft">{f.a}</p>
             </details>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

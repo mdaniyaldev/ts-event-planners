@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/icons";
+import { Reveal } from "@/components/reveal";
+import { site, whatsappHref } from "@/lib/site";
 
 const SWAG_WIDTH = 120;
 // Enough swags to cross a 2400px-wide screen; the row is clipped, so extra ones are harmless.
@@ -33,20 +35,31 @@ export function CtaBand({ heading = `Planning an event in ${site.city}?` }: { he
   return (
     <section className="gold-fill relative">
       <FairyLights />
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 pb-16 pt-24 sm:px-8 sm:pb-20 md:flex-row md:items-center md:justify-between">
+      <Reveal className="mx-auto flex max-w-7xl flex-col gap-8 px-5 pb-16 pt-24 sm:px-8 sm:pb-20 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="font-display text-4xl leading-tight sm:text-5xl">{heading}</h2>
           <p className="mt-3 max-w-[32rem] text-lg">
             Tell us the date and the guest count. We reply within {site.quoteWithin}.
           </p>
         </div>
-        <Link
-          href="/contact/"
-          className="inline-flex min-h-12 shrink-0 items-center self-start bg-ink px-8 text-base font-semibold text-white transition-colors hover:bg-ink-soft md:self-auto"
-        >
-          Plan your event
-        </Link>
-      </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-x-7 gap-y-4">
+          <Link
+            href="/contact/"
+            className="inline-flex min-h-12 items-center btn-ink px-8 text-base font-semibold"
+          >
+            Plan your event
+          </Link>
+          <a
+            href={whatsappHref(`Salam, I would like to plan an event in ${site.city}.`)}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex min-h-11 items-center gap-2 text-base font-semibold link-dark"
+          >
+            <WhatsAppIcon className="h-5 w-5" />
+            WhatsApp
+          </a>
+        </div>
+      </Reveal>
     </section>
   );
 }

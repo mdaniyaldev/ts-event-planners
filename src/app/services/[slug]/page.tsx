@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CtaBand } from "@/components/cta-band";
+import { PageTransition } from "@/components/page-transition";
+import { Reveal, RevealItem } from "@/components/reveal";
 import { byCategory, filterHref, photoRef } from "@/lib/photos";
 import { services } from "@/lib/content";
 import { site } from "@/lib/site";
@@ -36,14 +38,14 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
   const others = services.filter((s) => s.slug !== slug);
 
   return (
-    <>
+    <PageTransition>
       <article className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
         <Link href="/services/" className="inline-flex min-h-11 items-center text-base font-semibold text-gold-deep hover:text-ink">
           All services
         </Link>
 
         <div className="mt-4 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16">
-          <div>
+          <Reveal>
             <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">{service.title}</h1>
             <p className="mt-6 max-w-[34rem] text-lg text-ink-soft sm:text-xl">{service.summary}</p>
 
@@ -60,61 +62,64 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
               <Link
                 href="/contact/"
-                className="gold-fill inline-flex min-h-12 items-center px-7 text-base font-semibold transition-colors hover:bg-gold-foil"
+                className="btn-gold inline-flex min-h-12 items-center px-7 text-base font-semibold"
               >
                 Plan your event
               </Link>
               <Link
                 href={filterHref(service.filter)}
-                className="inline-flex min-h-11 items-center text-base font-semibold text-gold-deep underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink"
+                className="inline-flex min-h-11 items-center text-base font-semibold link-gold"
               >
                 See all {service.title.toLowerCase()} photos
               </Link>
             </div>
-          </div>
+          </Reveal>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={cover.src}
-            alt={cover.alt}
-            width={cover.w}
-            height={cover.h}
-            fetchPriority="high"
-            className="aspect-[4/3] w-full object-cover lg:aspect-[5/4]"
-          />
+          <Reveal delay={0.12}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={cover.src}
+              alt={cover.alt}
+              width={cover.w}
+              height={cover.h}
+              fetchPriority="high"
+              className="aspect-[4/3] w-full object-cover lg:aspect-[5/4]"
+            />
+          </Reveal>
         </div>
       </article>
 
       {strip.length > 0 && (
         <section className="border-t border-line bg-leaf py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
-            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+            <Reveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
               <h2 className="font-display text-4xl leading-tight sm:text-5xl">From our events</h2>
               <Link
                 href={filterHref(service.filter)}
-                className="inline-flex min-h-11 items-center text-base font-semibold text-gold-deep underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink"
+                className="inline-flex min-h-11 items-center text-base font-semibold link-gold"
               >
                 See all {more.length} photos
               </Link>
-            </div>
+            </Reveal>
             <div className="mt-12 gap-5 sm:mt-16 sm:columns-2 lg:columns-3 [&>*]:mb-5">
-              {strip.map((p) => (
-                <Link
-                  key={p.id}
-                  href={filterHref(service.filter)}
-                  className="block break-inside-avoid overflow-hidden border border-line bg-white"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.thumb}
-                    alt={p.alt}
-                    width={p.w}
-                    height={p.h}
-                    loading="lazy"
-                    decoding="async"
-                    className="block h-auto w-full"
-                  />
-                </Link>
+              {strip.map((p, i) => (
+                <Reveal key={p.id} delay={(i % 3) * 0.08} className="break-inside-avoid">
+                  <Link
+                    href={filterHref(service.filter)}
+                    className="img-zoom block border border-line bg-white"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.thumb}
+                      alt={p.alt}
+                      width={p.w}
+                      height={p.h}
+                      loading="lazy"
+                      decoding="async"
+                      className="block h-auto w-full"
+                    />
+                  </Link>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -122,24 +127,24 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
       )}
 
       <section className="border-t border-line bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <Reveal className="mx-auto max-w-7xl px-5 sm:px-8">
           <h2 className="font-display text-3xl leading-tight">Other events we plan</h2>
           <ul className="mt-6 flex flex-wrap gap-x-10 gap-y-2">
-            {others.map((s) => (
-              <li key={s.slug}>
+            {others.map((s, i) => (
+              <RevealItem key={s.slug} delay={0.1 + i * 0.08}>
                 <Link
                   href={`/services/${s.slug}/`}
-                  className="inline-block py-2 text-lg font-semibold text-gold-deep underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink"
+                  className="inline-block py-2 text-lg font-semibold link-gold"
                 >
                   {s.title}
                 </Link>
-              </li>
+              </RevealItem>
             ))}
           </ul>
-        </div>
+        </Reveal>
       </section>
 
       <CtaBand />
-    </>
+    </PageTransition>
   );
 }

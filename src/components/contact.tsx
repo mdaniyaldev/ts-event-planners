@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Reveal } from "@/components/reveal";
 import { site } from "@/lib/site";
 import { burstConfetti } from "@/lib/confetti";
 
@@ -40,7 +41,7 @@ export function Contact() {
   return (
     <section className="bg-white pb-20 pt-14 sm:pb-28 sm:pt-20">
       <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-24">
-        <div>
+        <Reveal>
           <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">Tell us what you are celebrating</h1>
           <p className="mt-5 max-w-[30rem] text-ink-soft">
             Share the date, the number of guests and the venue if you have one. We reply within {site.quoteWithin} with
@@ -51,15 +52,19 @@ export function Contact() {
             <div>
               <dt className="text-ink-soft">Email</dt>
               <dd className="mt-1 font-medium">
-                <a href={`mailto:${site.email}`} className="underline decoration-gold decoration-2 underline-offset-4">
+                <a href={`mailto:${site.email}`} className="link-ink underline-offset-4">
                   {site.email}
                 </a>
               </dd>
             </div>
             <div>
-              <dt className="text-ink-soft">Phone</dt>
+              <dt className="text-ink-soft">Phone and WhatsApp</dt>
               <dd className="mt-1 font-medium">
-                <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>
+                {site.phones.map((p) => (
+                  <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="inline-flex min-h-11 items-center pr-6">
+                    {p}
+                  </a>
+                ))}
               </dd>
             </div>
             <div>
@@ -74,8 +79,9 @@ export function Contact() {
               </dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
 
+        <Reveal delay={0.12}>
         <form onSubmit={onSubmit} className="grid gap-6 sm:grid-cols-2" aria-describedby="form-status">
           <label className="block text-base font-medium">
             Your name
@@ -118,7 +124,7 @@ export function Contact() {
           <div className="sm:col-span-2">
             <button
               type="submit"
-              className="gold-fill inline-flex min-h-12 items-center px-8 text-base font-semibold transition-colors hover:bg-gold-foil"
+              className="btn-gold inline-flex min-h-12 items-center px-8 text-base font-semibold"
             >
               Send enquiry
             </button>
@@ -129,6 +135,7 @@ export function Contact() {
             </p>
           </div>
         </form>
+        </Reveal>
       </div>
     </section>
   );

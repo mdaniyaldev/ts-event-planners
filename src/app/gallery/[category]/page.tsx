@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GalleryView } from "@/components/gallery";
 import { CtaBand } from "@/components/cta-band";
+import { PageTransition } from "@/components/page-transition";
 import { filterFromSlug, filterSlug } from "@/lib/photos";
 import { site } from "@/lib/site";
 
@@ -20,6 +21,7 @@ const intros: Record<string, string> = {
   "Banquet halls": "Hall layouts with stages, lounges and tables ready for guests.",
   "Dinners and lounges": "Table settings, centrepieces and lounge corners for evenings and receptions.",
   Birthdays: "Themed decor, balloons and dessert stands for birthdays and parties.",
+  "Stage designs": "Sofas, floral backdrops, drapes and lights for the stage where the couple sits.",
   Videos: "Short videos from events we have set up.",
 };
 
@@ -39,9 +41,9 @@ export default async function GalleryCategoryPage({ params }: { params: Promise<
   if (!filter) notFound();
 
   return (
-    <>
+    <PageTransition>
       <GalleryView filter={filter} intro={intros[filter]} />
       <CtaBand />
-    </>
+    </PageTransition>
   );
 }

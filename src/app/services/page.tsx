@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/page-intro";
+import { PageTransition } from "@/components/page-transition";
 import { Process } from "@/components/process";
-import { RevealImage } from "@/components/reveal-image";
+import { RevealItem } from "@/components/reveal";
 import { CtaBand } from "@/components/cta-band";
 import { photoRef } from "@/lib/photos";
 import { services } from "@/lib/content";
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function ServicesPage() {
   return (
-    <>
+    <PageTransition>
       <PageIntro title="Services">
         Weddings, mehndis, receptions and birthdays in {site.city}. Choose an event to see what we set up for it.
       </PageIntro>
@@ -25,19 +26,21 @@ export default function ServicesPage() {
           {services.map((s, i) => {
             const photo = photoRef(s.photo.n, s.photo.alt);
             return (
-              <li
+              <RevealItem
                 key={s.slug}
                 className="grid items-center gap-8 border-t border-gold/60 py-10 md:grid-cols-12 md:gap-12 md:py-14"
               >
                 {/* Photo sides alternate down the page so the list has a rhythm. */}
                 <div className={`md:col-span-6 ${i % 2 === 1 ? "md:order-2" : ""}`}>
-                  <RevealImage
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={photo.src}
                     alt={photo.alt}
                     width={photo.w}
                     height={photo.h}
-                    priority={i === 0}
-                    className="aspect-[4/3] object-cover"
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="block aspect-[4/3] w-full object-cover"
                   />
                 </div>
                 <div className="md:col-span-6">
@@ -53,12 +56,12 @@ export default function ServicesPage() {
                   </ul>
                   <Link
                     href={`/services/${s.slug}/`}
-                    className="mt-4 inline-flex min-h-11 items-center text-base font-semibold text-gold-deep underline decoration-gold decoration-2 underline-offset-[6px] hover:text-ink"
+                    className="mt-4 inline-flex min-h-11 items-center text-base font-semibold link-gold"
                   >
                     More about {s.title.toLowerCase()}
                   </Link>
                 </div>
-              </li>
+              </RevealItem>
             );
           })}
         </ul>
@@ -66,6 +69,6 @@ export default function ServicesPage() {
 
       <Process />
       <CtaBand />
-    </>
+    </PageTransition>
   );
 }

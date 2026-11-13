@@ -10,9 +10,10 @@
   --color-gold: #c9a24a;
   --color-gold-foil: #ebd27f;
   --color-line: #e4dcc8;
+  --color-wash: #e8e1cc;
 
-  --font-display: var(--font-gilda), "Times New Roman", serif;
-  --font-sans: var(--font-hanken), system-ui, sans-serif;
+  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
 }
 
 @layer base {
@@ -31,6 +32,13 @@
     font-size: 1.0625rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+  }
+  /* Cormorant is light at 400, so every heading sits at medium; the hero sets semibold itself. */
+  h1,
+  h2,
+  h3,
+  blockquote {
+    font-weight: 500;
   }
   :focus-visible {
     outline: 2px solid var(--color-gold-deep);
@@ -95,20 +103,6 @@
 /* Motion. Mostly CSS so it costs no JavaScript.                       */
 /* ------------------------------------------------------------------ */
 
-/* Marquee of event types. Two identical groups, shifted by half the track. */
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-.ticker {
-  animation: ticker 50s linear infinite;
-}
-.ticker-wrap:hover .ticker,
-.ticker-wrap:focus-within .ticker {
-  animation-play-state: paused;
-}
-
 /* Fairy lights: each bulb twinkles on its own delay (--d is set per bulb). */
 @keyframes twinkle {
   0%,
@@ -166,12 +160,104 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ticker,
   .bulb {
     animation: none;
-  }
-  .bulb {
     opacity: 1;
+  }
+}
+
+/*
+  Page changes (React <ViewTransition> in page-transition.tsx, on the browser's View Transitions API).
+  The old page fades out quickly; the new one opens from the middle like stage curtains parting.
+  The header is pinned so only the content moves. Browsers without the API just swap pages.
+*/
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+::view-transition-old(.page-exit) {
+  animation: 180ms ease-in both vt-fade reverse;
+}
+::view-transition-new(.page-enter) {
+  animation:
+    720ms cubic-bezier(0.76, 0, 0.24, 1) both vt-curtain,
+    360ms ease-out 100ms both vt-fade;
+}
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-curtain {
+  from {
+    clip-path: inset(0 50% 0 50%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/*
+  A hard load (first visit, refresh) has no old page to leave, so the content fades and rises instead.
+  PageWrap (page-wrap.tsx) sets <html data-navigated> on the first client navigation, after which the
+  view transition above is the only entrance.
+*/
+@keyframes page-load {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-navigated]) .page-wrap {
+    animation: page-load 0.7s cubic-bezier(0.22, 0.7, 0.2, 1) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/*
+  Scroll reveals (<Reveal> in reveal.tsx). "pending" is the server-rendered state and is fully visible;
+  the script marks what is below the fold "hidden" and flips it to "shown" as it scrolls in.
+  --d staggers items in a list.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal="hidden"] {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  [data-reveal="shown"] {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.75s cubic-bezier(0.22, 0.7, 0.2, 1) var(--d, 0s),
+      translate 0.75s cubic-bezier(0.22, 0.7, 0.2, 1) var(--d, 0s);
   }
 }
 
@@ -181,49 +267,6 @@
 */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    /* A photo is uncovered top to bottom while it scrolls in, then settles. */
-    @keyframes reveal-wipe {
-      from {
-        clip-path: inset(0 0 100% 0);
-      }
-      to {
-        clip-path: inset(0 0 0 0);
-      }
-    }
-    @keyframes reveal-settle {
-      from {
-        scale: 1.18;
-      }
-      to {
-        scale: 1;
-      }
-    }
-    .reveal-img {
-      animation: reveal-wipe linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 60%;
-    }
-    .reveal-img > img {
-      animation: reveal-settle linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 50%;
-    }
-
-    /* The hero photo opens out from the middle like a stage widening. */
-    @keyframes stage-open {
-      from {
-        clip-path: inset(14% 22% 0 22%);
-      }
-      to {
-        clip-path: inset(0 0 0 0);
-      }
-    }
-    .stage-open {
-      animation: stage-open linear both;
-      animation-timeline: view();
-      animation-range: entry 5% cover 40%;
-    }
-
     /* A gold line draws itself as its step scrolls into view. */
     @keyframes draw {
       from {
@@ -246,4 +289,351 @@
 .gold-fill {
   background-color: var(--color-gold);
   color: var(--color-ink);
+}
+
+/*
+  Hover and press effects. One system for the whole site:
+    .btn-gold / .btn-ink   buttons: a lighter fill sweeps up from the bottom edge, the button lifts a little
+    .link-gold / -light / -dark / -ink   text links: the underline drops away from the text and darkens
+    .nav-link              header links: a gold line grows out from the middle
+    .foot-link             footer links: slide right a few pixels
+    .img-zoom              photo tiles: the photo slowly zooms inside its frame
+  Colour changes always run; movement is switched off for people who ask for reduced motion (end of this block).
+  These are unlayered, so they win over Tailwind utilities on the same element.
+*/
+.btn-gold,
+.btn-ink {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    translate 0.3s cubic-bezier(0.22, 0.7, 0.2, 1),
+    box-shadow 0.3s ease,
+    color 0.35s ease;
+}
+.btn-gold {
+  background-color: var(--color-gold);
+  color: var(--color-ink);
+}
+.btn-ink {
+  background-color: var(--color-ink);
+  color: #fff;
+}
+.btn-gold::before,
+.btn-ink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  translate: 0 101%;
+  transition: translate 0.45s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.btn-gold::before {
+  background-color: var(--color-gold-foil);
+}
+.btn-ink::before {
+  background-color: #fff;
+}
+.btn-gold:hover::before,
+.btn-gold:focus-visible::before,
+.btn-ink:hover::before,
+.btn-ink:focus-visible::before {
+  translate: 0 0;
+}
+.btn-ink:hover,
+.btn-ink:focus-visible {
+  color: var(--color-ink);
+}
+.btn-gold:hover,
+.btn-gold:focus-visible {
+  translate: 0 -2px;
+  box-shadow: 0 10px 22px rgb(125 95 23 / 0.35);
+}
+.btn-ink:hover,
+.btn-ink:focus-visible {
+  translate: 0 -2px;
+  box-shadow: 0 10px 22px rgb(32 28 20 / 0.3);
+}
+.btn-gold:active,
+.btn-ink:active {
+  translate: 0 0;
+  box-shadow: none;
+}
+
+.link-gold,
+.link-light,
+.link-dark,
+.link-ink {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  transition:
+    color 0.25s ease,
+    text-decoration-color 0.25s ease,
+    text-underline-offset 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.link-gold {
+  color: var(--color-gold-deep);
+  text-decoration-color: var(--color-gold);
+}
+.link-gold:hover {
+  color: var(--color-ink);
+  text-decoration-color: var(--color-gold-deep);
+}
+.link-light {
+  color: #fff;
+  text-decoration-color: var(--color-gold);
+}
+.link-light:hover {
+  color: var(--color-gold-foil);
+  text-decoration-color: var(--color-gold-foil);
+}
+.link-dark {
+  color: var(--color-ink);
+  text-decoration-color: rgb(32 28 20 / 0.55);
+}
+.link-dark:hover {
+  text-decoration-color: var(--color-ink);
+}
+.link-ink {
+  text-decoration-color: var(--color-gold);
+}
+.link-ink:hover {
+  color: var(--color-gold-deep);
+  text-decoration-color: var(--color-gold-deep);
+}
+.link-gold:hover,
+.link-light:hover,
+.link-dark:hover,
+.link-ink:hover {
+  text-underline-offset: 10px;
+}
+
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background-color: var(--color-gold);
+  scale: 0 1;
+  transition: scale 0.35s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link[aria-current="page"]::after {
+  scale: 1 1;
+}
+.nav-link:hover {
+  color: var(--nav-hover, var(--color-ink));
+}
+
+.foot-link {
+  transition:
+    color 0.2s ease,
+    translate 0.25s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.foot-link:hover,
+.foot-link:focus-visible {
+  color: var(--color-ink);
+  translate: 4px 0;
+}
+
+.img-zoom {
+  overflow: hidden;
+}
+.img-zoom img {
+  transition: scale 0.7s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.img-zoom:hover img,
+.img-zoom:focus-visible img {
+  scale: 1.07;
+}
+
+/* The floating WhatsApp button: fills gold, grows, and a ring spreads out from it. */
+.wa-button {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    scale 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.wa-button::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-gold);
+  opacity: 0;
+}
+.wa-button:hover,
+.wa-button:focus-visible {
+  background-color: var(--color-gold);
+  color: var(--color-ink);
+  scale: 1.1;
+}
+.wa-button:hover::after,
+.wa-button:focus-visible::after {
+  animation: wa-ring 1.4s ease-out infinite;
+}
+.wa-button:active {
+  scale: 0.96;
+}
+@keyframes wa-ring {
+  from {
+    opacity: 0.8;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 1.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold,
+  .btn-ink,
+  .nav-link::after,
+  .foot-link,
+  .img-zoom img,
+  .wa-button {
+    transition-property: color, background-color, box-shadow;
+  }
+  .btn-gold::before,
+  .btn-ink::before {
+    transition: none;
+  }
+  .btn-gold:hover,
+  .btn-gold:focus-visible,
+  .btn-ink:hover,
+  .btn-ink:focus-visible,
+  .foot-link:hover,
+  .foot-link:focus-visible,
+  .img-zoom:hover img,
+  .img-zoom:focus-visible img,
+  .wa-button:hover,
+  .wa-button:focus-visible {
+    translate: none;
+    scale: none;
+  }
+  .wa-button:hover::after,
+  .wa-button:focus-visible::after {
+    animation: none;
+  }
+  .link-gold:hover,
+  .link-light:hover,
+  .link-dark:hover,
+  .link-ink:hover {
+    text-underline-offset: 6px;
+  }
+}
+
+/* Home hero: the photo fades into the dark ground where the headline sits, like a night sky. The top band keeps the header readable. */
+.hero-shade {
+  background:
+    linear-gradient(to bottom, rgb(32 28 20 / 0.6) 0%, transparent 22%),
+    radial-gradient(ellipse 80% 55% at 25% 72%, rgb(32 28 20 / 0.5), transparent 70%),
+    linear-gradient(to right, rgb(32 28 20 / 0.55) 0%, rgb(32 28 20 / 0.3) 40%, transparent 70%),
+    linear-gradient(to top, rgb(32 28 20 / 0.95) 0%, rgb(32 28 20 / 0.84) 50%, rgb(32 28 20 / 0.35) 76%, transparent 100%);
+}
+@media (min-width: 768px) {
+  .hero-shade {
+    background:
+      linear-gradient(to bottom, rgb(32 28 20 / 0.6) 0%, transparent 20%),
+      radial-gradient(ellipse 70% 50% at 25% 70%, rgb(32 28 20 / 0.5), transparent 70%),
+      linear-gradient(to right, rgb(32 28 20 / 0.55) 0%, rgb(32 28 20 / 0.3) 40%, transparent 70%),
+      linear-gradient(to top, rgb(32 28 20 / 0.92) 0%, rgb(32 28 20 / 0.55) 42%, rgb(32 28 20 / 0.1) 72%, transparent 100%);
+  }
+}
+
+/*
+  Hero slideshow. Four slides share one 28s cycle, a new one every 7s. A slide fades in on top (z 3) while the
+  previous one is still fully visible (z 2), so the picture never dips to black, then drifts closer (scale) until
+  it is covered. --i is the slide number; the negative delay starts slide 0 already visible at page load.
+  Without motion, only the first slide shows.
+*/
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.hero-slide:first-child {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slide {
+    animation: hero-slide 28s linear infinite both;
+    animation-delay: calc(var(--i) * 7s - 2s);
+    will-change: opacity, scale;
+  }
+}
+@keyframes hero-slide {
+  0% {
+    opacity: 0;
+    z-index: 3;
+    scale: 1;
+  }
+  7% {
+    opacity: 1;
+    z-index: 3;
+  }
+  7.01% {
+    z-index: 2;
+  }
+  32.9% {
+    opacity: 1;
+    z-index: 2;
+  }
+  33% {
+    opacity: 0;
+    z-index: 1;
+    scale: 1.08;
+  }
+  100% {
+    opacity: 0;
+    z-index: 1;
+    scale: 1.08;
+  }
+}
+
+/* Mehrab (arch) frame: a photo with a rounded top and a thin gold keyline just outside it. Put the photo inside. */
+.arch-frame {
+  border: 1.5px solid var(--color-gold);
+  border-radius: 9999px 9999px 0 0;
+  padding: 10px;
+}
+.arch-frame > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 9999px 9999px 0 0;
+}
+
+/* Full-width photo band: the photo is taller than its frame and drifts a little as the band scrolls past. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes parallax {
+      from {
+        translate: 0 -9%;
+      }
+      to {
+        translate: 0 9%;
+      }
+    }
+    .parallax {
+      animation: parallax linear both;
+      animation-timeline: view();
+    }
+  }
+}
+
+/* The highlights row scrolls sideways on phones without showing a scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

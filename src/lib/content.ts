@@ -27,7 +27,7 @@ export const services: Service[] = [
       "Draping, lighting and chandeliers",
       "Guest tables, chairs and sofas",
     ],
-    photo: { n: 1, alt: "A white and gold wedding stage with a sofa, drapes and flowers" },
+    photo: { n: 12, alt: "A wedding stage with a cane sofa under an arch of white roses, greenery and chandeliers" },
     filter: "Weddings",
   },
   {
@@ -40,7 +40,7 @@ export const services: Service[] = [
       "Marigold and flower decor",
       "Signs and props for photos",
     ],
-    photo: { n: 103, alt: "A mehndi stage with yellow flowers and bright coloured floor seating" },
+    photo: { n: 101, alt: "A mehndi stage framed in yellow and orange flowers with a bright patchwork floor" },
     filter: "Mehndi and dholki",
   },
   {
@@ -54,7 +54,7 @@ export const services: Service[] = [
       "Lounge seating",
       "Buffet and service counters",
     ],
-    photo: { n: 57, alt: "A long black table with gold chairs and a runner of white flowers" },
+    photo: { n: 146, alt: "A long white dinner table with a striped runner, folded napkins and greenery behind" },
     filter: "Dinners and lounges",
   },
   {
@@ -71,6 +71,49 @@ export const services: Service[] = [
     filter: "Birthdays",
   },
 ];
+
+/**
+ * About page and the "Who we are" block on the home page. Draft copy written only from facts the client
+ * has published (the Instagram bio: weddings, corporate events and private celebrations in Karachi; the
+ * tagline; the event types in the gallery). No founding year, team size or event counts: add those
+ * once the client confirms them.
+ */
+export const about = {
+  lead: `${site.name} plans and runs weddings, mehndis, receptions, birthdays, corporate events and private celebrations across ${site.city}.`,
+  story: [
+    "We design the whole setting: the entrance, the stage, the lighting and the tables where your guests sit. Our team sets it up at your venue before anyone arrives, and stays on to run the day.",
+    "That is the idea behind our name for it: we manage, you celebrate. You decide the date, the colours and the mood. We handle the rest, so the family can enjoy the event instead of organising it.",
+  ],
+  /** Short version for the home page. */
+  short: `A ${site.city} team that designs, sets up and runs your event, from the first idea to the last guest leaving.`,
+  principles: [
+    {
+      title: "One team from start to finish",
+      text: "The people who plan your event are the people who set it up and run it on the day.",
+    },
+    {
+      title: "Planned around your venue",
+      text: "Halls, lawns, rooftops and homes all work differently, so we plan the layout around yours and visit if needed.",
+    },
+    {
+      title: "Your colours and your theme",
+      text: "We build the decor from what you like, whether that is soft white florals or a bright mehndi floor.",
+    },
+    {
+      title: "Ready before guests arrive",
+      text: "Stage, lights and seating are finished and checked before the first guest walks in.",
+    },
+  ],
+  photo: { n: 23, alt: "A white aisle with gold stripes running through a lawn marquee with draped ceiling and chandeliers" },
+};
+
+export type TeamMember = { name: string; role: string; photo?: { n: number; alt: string } };
+
+/**
+ * Add the real people here, with their permission. While this list is empty the team section
+ * does not appear on the About page.
+ */
+export const team: TeamMember[] = [];
 
 export const steps = [
   { title: "Tell us", text: "Send the form or call us with your date, guest count and venue." },
