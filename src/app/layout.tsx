@@ -29,11 +29,19 @@ export const metadata: Metadata = {
   description: site.description,
 };
 
+// Runs before the first paint: puts a saved theme choice on <html> so a dark-theme visitor never sees a white flash.
+// With no saved choice nothing is set and the CSS follows the system setting. (See ThemeToggle.)
+const themeScript = `try{var t=localStorage.getItem("ts-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+    // suppressHydrationWarning: the script above may add data-theme to <html> before React hydrates.
+    <html lang="en" className={`${cormorant.variable} ${jost.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <Providers>
           <Header />

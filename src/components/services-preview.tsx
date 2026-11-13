@@ -6,7 +6,7 @@ import { services } from "@/lib/content";
 /** Home page: the four event types, each linking to its own page. */
 export function ServicesPreview() {
   return (
-    <section className="border-t border-line bg-white py-20 sm:py-28">
+    <section className="border-t border-line bg-page py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Reveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <h2 className="font-display text-4xl leading-tight sm:text-5xl">What we plan</h2>

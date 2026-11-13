@@ -34,7 +34,7 @@ export function Hero() {
   return (
     <section
       onPointerMove={onPointerMove}
-      className="relative isolate flex min-h-[max(34rem,min(100svh,58rem))] flex-col justify-end bg-ink text-white"
+      className="relative isolate flex min-h-[max(34rem,min(100svh,58rem))] flex-col justify-end bg-night text-white"
     >
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {heroSlides.map((s, i) => (

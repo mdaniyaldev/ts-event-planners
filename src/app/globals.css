@@ -3,6 +3,10 @@
 /* Gold + white. Gold text on white uses --color-gold-deep to stay readable. */
 @theme {
   --color-white: #ffffff;
+  /* Page background. A token (not white) so the dark theme can swap it. */
+  --color-page: #ffffff;
+  /* The fixed dark of the brand: dark surfaces (hero, interlude, buttons) and text on gold. Never swapped. */
+  --color-night: #201c14;
   --color-leaf: #f6f4ef;
   --color-ink: #201c14;
   --color-ink-soft: #5b5445;
@@ -16,9 +20,41 @@
   --font-sans: var(--font-jost), system-ui, sans-serif;
 }
 
+/*
+  Dark theme ("Night"): a warm black page, ivory text, a lighter gold for gold text. It follows the system setting
+  until the visitor picks a theme with the toggle (ThemeToggle sets <html data-theme> and remembers it).
+  Only the tokens that change are listed. Dark surfaces and text on gold use --color-night, which never swaps.
+  The same values appear twice because CSS cannot share one block between a media query and an attribute selector.
+*/
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-page: #15120c;
+  --color-leaf: #1d1912;
+  --color-ink: #f1e9d8;
+  --color-ink-soft: #b9ae96;
+  --color-gold-deep: #dcb964;
+  --color-line: #3b3324;
+  --color-wash: #2b2519;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-page: #15120c;
+    --color-leaf: #1d1912;
+    --color-ink: #f1e9d8;
+    --color-ink-soft: #b9ae96;
+    --color-gold-deep: #dcb964;
+    --color-line: #3b3324;
+    --color-wash: #2b2519;
+  }
+}
+
 @layer base {
   html {
-    background: var(--color-white);
+    background: var(--color-page);
     color: var(--color-ink);
     scroll-padding-top: 4.5rem;
   }
@@ -46,7 +82,7 @@
   }
   ::selection {
     background: var(--color-gold-foil);
-    color: var(--color-ink);
+    color: var(--color-night);
   }
 }
 
@@ -288,7 +324,7 @@
 /* Flat metallic fill for buttons and the small marks: no gradient wash. */
 .gold-fill {
   background-color: var(--color-gold);
-  color: var(--color-ink);
+  color: var(--color-night);
 }
 
 /*
@@ -313,10 +349,10 @@
 }
 .btn-gold {
   background-color: var(--color-gold);
-  color: var(--color-ink);
+  color: var(--color-night);
 }
 .btn-ink {
-  background-color: var(--color-ink);
+  background-color: var(--color-night);
   color: #fff;
 }
 .btn-gold::before,
@@ -342,7 +378,7 @@
 }
 .btn-ink:hover,
 .btn-ink:focus-visible {
-  color: var(--color-ink);
+  color: var(--color-night);
 }
 .btn-gold:hover,
 .btn-gold:focus-visible {
@@ -388,12 +424,13 @@
   color: var(--color-gold-foil);
   text-decoration-color: var(--color-gold-foil);
 }
+/* For text on the gold band, which stays gold in both themes. */
 .link-dark {
-  color: var(--color-ink);
+  color: var(--color-night);
   text-decoration-color: rgb(32 28 20 / 0.55);
 }
 .link-dark:hover {
-  text-decoration-color: var(--color-ink);
+  text-decoration-color: var(--color-night);
 }
 .link-ink {
   text-decoration-color: var(--color-gold);
@@ -453,6 +490,28 @@
   scale: 1.07;
 }
 
+/* Theme switch: a moon in the light theme, a sun in the dark one (the same two conditions as "Dark theme" above). */
+.theme-icon-sun {
+  display: none;
+}
+:root[data-theme="dark"] .theme-icon-moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-icon-sun {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-moon {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .theme-icon-sun {
+    display: block;
+  }
+}
+.theme-toggle:hover {
+  color: var(--nav-hover, var(--color-gold-deep));
+}
+
 /* The floating WhatsApp button: fills gold, grows, and a ring spreads out from it. */
 .wa-button {
   transition:
@@ -471,7 +530,7 @@
 .wa-button:hover,
 .wa-button:focus-visible {
   background-color: var(--color-gold);
-  color: var(--color-ink);
+  color: var(--color-night);
   scale: 1.1;
 }
 .wa-button:hover::after,

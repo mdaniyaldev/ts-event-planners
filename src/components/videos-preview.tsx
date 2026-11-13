@@ -9,7 +9,7 @@ const picks = ["v02", "v03", "v04"];
 /** Home page: three event videos in the vertical shape they were filmed in, like Instagram reels. */
 export function VideosPreview() {
   return (
-    <section className="border-t border-line bg-white py-20 sm:py-28">
+    <section className="border-t border-line bg-page py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Reveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <h2 className="font-display text-4xl leading-tight sm:text-5xl">Watch our events</h2>
@@ -32,7 +32,7 @@ export function VideosPreview() {
                 // #t=1 makes browsers show a real frame as the cover instead of a black box.
                 src={`/videos/${id}.mp4#t=1`}
                 aria-label={`Event video ${i + 1}`}
-                className="block aspect-[9/16] w-full bg-ink object-cover"
+                className="block aspect-[9/16] w-full bg-night object-cover"
               />
             </RevealItem>
           ))}

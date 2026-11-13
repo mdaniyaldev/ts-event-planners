@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mark } from "@/components/mark";
 import { InstagramIcon, WhatsAppIcon, YouTubeIcon } from "@/components/icons";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { site, whatsappHref } from "@/lib/site";
 import { services } from "@/lib/content";
 
@@ -108,9 +109,13 @@ export function Footer() {
         </p>
       </div>
       <div className="border-t border-line">
-        <p className="mx-auto max-w-7xl px-5 py-5 text-base text-ink-soft sm:px-8">
-          Copyright {site.year} {site.name}
-        </p>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-1 px-5 py-3 text-base text-ink-soft sm:px-8">
+          <p>
+            Copyright {site.year} {site.name}
+          </p>
+          {/* Dark theme switch. The header has one too from 768px up; this is the one phones get. */}
+          <ThemeToggle label="Dark mode" className="-mx-2 inline-flex px-2" />
+        </div>
       </div>
     </footer>
   );

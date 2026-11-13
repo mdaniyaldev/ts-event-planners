@@ -8,7 +8,7 @@ import { burstConfetti } from "@/lib/confetti";
 const projectTypes = ["Wedding", "Mehndi or dholki", "Reception or dinner", "Birthday or party", "Something else"];
 
 const field =
-  "mt-2 block w-full border border-ink/30 bg-white px-4 py-3 text-base text-ink placeholder:text-ink-soft/70 focus:border-gold-deep";
+  "mt-2 block w-full border border-ink/30 bg-page px-4 py-3 text-base text-ink placeholder:text-ink-soft/70 focus:border-gold-deep";
 
 export function Contact() {
   const [sent, setSent] = useState(false);
@@ -39,7 +39,7 @@ export function Contact() {
   }
 
   return (
-    <section className="bg-white pb-20 pt-14 sm:pb-28 sm:pt-20">
+    <section className="bg-page pb-20 pt-14 sm:pb-28 sm:pt-20">
       <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-24">
         <Reveal>
           <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">Tell us what you are celebrating</h1>

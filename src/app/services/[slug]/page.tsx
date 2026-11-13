@@ -106,7 +106,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                 <Reveal key={p.id} delay={(i % 3) * 0.08} className="break-inside-avoid">
                   <Link
                     href={filterHref(service.filter)}
-                    className="img-zoom block border border-line bg-white"
+                    className="img-zoom block border border-line bg-page"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -126,7 +126,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         </section>
       )}
 
-      <section className="border-t border-line bg-white py-16 sm:py-20">
+      <section className="border-t border-line bg-page py-16 sm:py-20">
         <Reveal className="mx-auto max-w-7xl px-5 sm:px-8">
           <h2 className="font-display text-3xl leading-tight">Other events we plan</h2>
           <ul className="mt-6 flex flex-wrap gap-x-10 gap-y-2">

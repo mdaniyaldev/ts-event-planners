@@ -28,7 +28,7 @@ export function FeaturedWork() {
           {featured.map((p, i) => (
             // Tiles arrive one by one across each row.
             <RevealItem key={p.id} delay={(i % 3) * 0.08}>
-              <Link href="/gallery/" className="img-zoom block bg-white">
+              <Link href="/gallery/" className="img-zoom block bg-page">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.thumb}

@@ -19,7 +19,7 @@ export default function Home() {
       <Hero />
 
       {/* Round covers for each kind of event, as on the client's Instagram highlights. */}
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-page py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <Reveal>
             <h2 className="font-display text-3xl leading-tight sm:text-4xl">Browse by event</h2>

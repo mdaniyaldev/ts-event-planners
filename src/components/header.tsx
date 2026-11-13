@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mark } from "@/components/mark";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { site } from "@/lib/site";
 
 const links = [
@@ -25,7 +26,7 @@ export function Header() {
       className={
         overHero
           ? "absolute inset-x-0 top-0 z-20 border-b border-white/15 text-white"
-          : "relative z-10 border-b border-line bg-white"
+          : "relative z-10 border-b border-line bg-page"
       }
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
@@ -58,6 +59,8 @@ export function Header() {
               </Link>
             );
           })}
+          {/* Below 768px there is no room beside the four links; the footer has the switch too. */}
+          <ThemeToggle className="-mr-2 hidden h-11 w-11 rounded-full hover:bg-current/10 md:inline-flex" />
         </nav>
       </div>
     </header>

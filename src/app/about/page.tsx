@@ -71,7 +71,7 @@ export default function AboutPage() {
       </section>
 
       {team.length > 0 && (
-        <section className="border-t border-line bg-white py-20 sm:py-28">
+        <section className="border-t border-line bg-page py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <Reveal>
               <h2 className="font-display text-4xl leading-tight sm:text-5xl">The team</h2>

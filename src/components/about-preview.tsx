@@ -8,7 +8,7 @@ export function AboutPreview() {
   const photo = photoRef(about.photo.n, about.photo.alt);
 
   return (
-    <section className="border-t border-line bg-white py-20 sm:py-28">
+    <section className="border-t border-line bg-page py-20 sm:py-28">
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
         <Reveal>
           <h2 className="font-display text-4xl leading-tight sm:text-5xl">Who we are</h2>

@@ -60,6 +60,19 @@ Headings sit at weight 500 via a base rule in `globals.css` (Cormorant is too li
 - Fixed WhatsApp button bottom-right (`whatsapp-button.tsx`, z-40, under the gallery lightbox). The old marquee ticker
   was removed; the highlights row does that job.
 
+## Dark theme ("Night")
+- Follows the system setting until the visitor picks one with `ThemeToggle` (`theme-toggle.tsx`), which sets
+  `<html data-theme="light|dark">` and saves it in localStorage (`ts-theme`). A tiny script in `layout.tsx` restores
+  the saved choice before first paint, so there is no flash. The toggle is in the footer on every screen and in the
+  header from 768px up (no room beside the four links below that).
+- Colours are tokens in `globals.css` (`@theme`, overridden under "Dark theme"): `page` (background, never use
+  `bg-white`), `leaf`, `ink` and `ink-soft` (text; they flip to ivory), `gold-deep` (gold text; lighter in dark),
+  `line`, `wash`. `night` is the fixed brand dark and never flips: use `bg-night` for dark surfaces (hero,
+  interlude, lightbox, WhatsApp button) and `text-night` for text on gold (`.gold-fill`, `.btn-gold`, `.link-dark`).
+  `text-ink` on a surface that stays dark or gold would turn ivory in dark mode: use `text-white` or `text-night`.
+- If a toggle's display class is set in the component and by the caller, the two fight; the component sets none.
+- To remove dark mode: revert the commit that added it (it is one self-contained change).
+
 ## Motion
 - No GSAP, on purpose (bundle size). CSS effects in `globals.css`: fairy lights `.bulb`, curtain `.curtain-*`,
   and the scroll-driven `.draw-line` (`animation-timeline: view()`; browsers without it show the finished state).

@@ -66,7 +66,7 @@ function Cover({ filter }: { filter: Filter }) {
   if (filter === "All") return <Mark className={size} />;
   if (filter === "Videos") {
     return (
-      <span className={`grid place-items-center rounded-full bg-ink text-gold-foil ${size}`}>
+      <span className={`grid place-items-center rounded-full bg-night text-gold-foil ${size}`}>
         <PlayIcon className="h-8 w-8 translate-x-0.5" />
       </span>
     );

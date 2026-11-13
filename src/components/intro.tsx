@@ -47,7 +47,7 @@ export function CurtainIntro() {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
       <div className="curtain curtain-l absolute inset-y-0 left-0 w-1/2" />
       <div className="curtain curtain-r absolute inset-y-0 right-0 w-1/2" />
-      <p className="curtain-mark absolute inset-0 flex flex-col items-center justify-center gap-5 font-display text-4xl text-ink sm:text-6xl">
+      <p className="curtain-mark absolute inset-0 flex flex-col items-center justify-center gap-5 font-display text-4xl text-night sm:text-6xl">
         <Mark className="h-20 w-20 sm:h-28 sm:w-28" />
         {site.name}
       </p>

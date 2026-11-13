@@ -40,7 +40,7 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
           <div className="gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5">
             {filter === "Videos"
               ? videos.map((v, i) => (
-                  <Reveal key={v.id} delay={(i % 3) * 0.08} className="break-inside-avoid border border-line bg-white">
+                  <Reveal key={v.id} delay={(i % 3) * 0.08} className="break-inside-avoid border border-line bg-page">
                     <video
                       controls
                       playsInline
@@ -48,7 +48,7 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
                       // #t=1 makes browsers show a real frame as the cover instead of a black box.
                       src={`${v.src}#t=1`}
                       aria-label={`Event video ${i + 1}`}
-                      className="block h-auto w-full bg-ink"
+                      className="block h-auto w-full bg-night"
                     />
                   </Reveal>
                 ))
@@ -63,7 +63,7 @@ export function GalleryView({ filter, intro }: { filter: Filter; intro: string }
                         lastTrigger.current = e.currentTarget;
                         setOpenIndex(i);
                       }}
-                      className="img-zoom block w-full cursor-zoom-in border border-line bg-white"
+                      className="img-zoom block w-full cursor-zoom-in border border-line bg-page"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -175,7 +175,7 @@ function Lightbox({
 
   return (
     <m.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/95 p-3 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-night/95 p-3 sm:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
